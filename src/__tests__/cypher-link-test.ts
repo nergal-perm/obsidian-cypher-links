@@ -15,7 +15,17 @@ describe('CypherLink', () => {
             ['[ : LINK ]',             'LINK'],
         ])('should extract type from "%s"', (input, expectedType) => {
             target = CypherLink.fromCypherString(input);
-            expect(target.type).toBe(expectedType);
+            expect(target._type).toBe(expectedType);
+        });
+
+        it.each([
+            // [input,                 expectedDirection]
+            ['-[:LINK]->(:tag)',       'out'],
+            ['<-[:LINK]-(:tag)',       'in'],
+            ['-[:LINK]-',              'none'],
+        ])('should extract direction from "%s"', (input, expectedDirection) => {
+            target = CypherLink.fromCypherString(input);
+            expect(target._direction).toBe(expectedDirection);
         });
 
         // Keep existing test for asString if needed

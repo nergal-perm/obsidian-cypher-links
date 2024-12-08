@@ -1,8 +1,10 @@
 export class CypherLink {
-    type: string;
+    _type: string;
+    _direction: any;
 
     private constructor(private _cypher: string) {
-        this.type = CypherLink.extractType(_cypher);
+        this._type = CypherLink.extractType(_cypher);
+        this._direction = CypherLink.extractDirection(_cypher);
     }
 
     get asString(): string {
@@ -19,6 +21,16 @@ export class CypherLink {
             return typeMatch[1];
         } else {
             throw new Error("Invalid cypher format");
+        }
+    }
+
+    static extractDirection(cypher: string): string {
+        if (cypher.includes('<')) {
+            return 'in';
+        } else if (cypher.includes('>')) {
+            return 'out';
+        } else {
+            return 'none';
         }
     }
 }
