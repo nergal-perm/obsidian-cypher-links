@@ -1,7 +1,7 @@
 import { ItemView, WorkspaceLeaf } from 'obsidian';
 import { VIEW_TYPE_CYPHER_LINKS } from './constants';
 import CypherLinksPlugin from './main';
-import { CypherLinks } from './cypher-links';
+import { CypherLinks } from './cypher-links-collection';
 
 export class CypherLinksView extends ItemView {
     plugin: CypherLinksPlugin;
@@ -34,7 +34,6 @@ export class CypherLinksView extends ItemView {
                 this.update();
             })
         );
-        console.log(this);
         this.update();
     }
 
@@ -62,7 +61,7 @@ export class CypherLinksView extends ItemView {
         const promises = files.map((file) => {
             return new Promise<void>((resolve) => {
                 this.app.fileManager.processFrontMatter(file, (frontmatter) => {
-                    const links = CypherLinks.fromFrontmatter(frontmatter).links;
+                    const links = CypherLinks.fromFrontmatter(frontmatter).linksAsText;
                     allLinks = allLinks.concat(links);
                     resolve();
                 });
@@ -70,7 +69,6 @@ export class CypherLinksView extends ItemView {
         });
 
         await Promise.all(promises);
-        console.log("returning links" + allLinks);
         return allLinks;
     }
 

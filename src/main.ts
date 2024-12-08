@@ -1,7 +1,7 @@
 import { Plugin, MarkdownView } from 'obsidian';
 import { CypherLinksView } from './view';
 import { VIEW_TYPE_CYPHER_LINKS } from './constants';
-import { CypherLinks } from './cypher-links';
+import { CypherLinks } from './cypher-links-collection';
 
 export default class CypherLinksPlugin extends Plugin {
     async onload() {
@@ -27,7 +27,7 @@ export default class CypherLinksPlugin extends Plugin {
         this.app.workspace.getLeavesOfType(VIEW_TYPE_CYPHER_LINKS).forEach((leaf) => {
             this.app.fileManager.processFrontMatter(file, (frontmatter) => {
                 try {
-                    const result = CypherLinks.fromFrontmatter(frontmatter).links;
+                    const result = CypherLinks.fromFrontmatter(frontmatter).linksAsText;
                     (leaf.view as CypherLinksView).updateWith(result);
                 } catch (error) {
                     console.error('Error in processFrontMatter callback:', error);
