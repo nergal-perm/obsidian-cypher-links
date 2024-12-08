@@ -1,0 +1,11 @@
+{
+	"id": "cypher-links-obsidian",
+	"name": "CYPHER Links",
+	"version": "1.0.1",
+	"minAppVersion": "1.0.0",
+	"description": "Handles CYPHER links in notes frontmatter",
+	"author": "nergal-perm",
+	"authorUrl": "https://github.com/nergal-perm",
+	"helpUrl": "",
+	"isDesktopOnly": false
+}
