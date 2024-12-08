@@ -9,8 +9,14 @@ describe('CypherLinks', () => {
             expect(target.linksAsText).toStrictEqual([]);
         });
         it('should be created with links from frontmatter', () => {
-            target = CypherLinks.fromFrontmatter({links: ['link1', 'link2']});
-            expect(target.linksAsText).toStrictEqual(['link1', 'link2']);
+            target = CypherLinks.fromFrontmatter({links: [
+                '<-[:link]-(:tag)', 
+                '-[:link]->(:tag)'
+            ]});
+            expect(target.linksAsText).toStrictEqual([
+                '<-[:link]-(:tag)', 
+                '-[:link]->(:tag)'
+            ]);
         });
     });
 
