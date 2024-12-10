@@ -1,4 +1,4 @@
-import { Plugin, MarkdownView, TFile } from 'obsidian';
+import { Plugin, MarkdownView, TAbstractFile } from 'obsidian';
 import { CypherLinksView } from './view';
 import { VIEW_TYPE_CYPHER_LINKS } from './constants';
 import { CypherLinks } from './cypher-links-collection';
@@ -8,9 +8,7 @@ export default class CypherLinksPlugin extends Plugin {
     private _nodes: CypherNode[] = [];
 
     async onload() {
-        this.fillNodes().then(() => {
-            console.log(this._nodes);
-        });
+        this.fillNodes();
 
         this.registerView(
             VIEW_TYPE_CYPHER_LINKS,
@@ -21,12 +19,25 @@ export default class CypherLinksPlugin extends Plugin {
         // Listen for active leaf change
         this.app.workspace.on('active-leaf-change', (leaf) => {
             if (leaf?.view instanceof MarkdownView) {
-                this.updateViewContent();
+                this.updateViewContent(leaf.view.file);
             }
         });
+        this.registerEvent(
+            this.app.vault.on('modify', (file) => {
+                this.fillNodes();
+                this.updateViewContent(file);
+            })
+        );
+        this.registerEvent(
+            this.app.vault.on('rename', (file) => {
+                this.fillNodes();
+                this.updateViewContent(file);
+            })
+        );
     }
 
-    async fillNodes() {
+    fillNodes() {
+        this._nodes = [];
         this.app.vault.getMarkdownFiles().forEach((file) => {
             CypherNode.fromFile(file, this.app.fileManager).then((node) => {
                 this._nodes.push(node);
@@ -34,19 +45,14 @@ export default class CypherLinksPlugin extends Plugin {
         });       
     }
 
-    updateViewContent() {
-        const activeView = this.app.workspace.getActiveViewOfType(MarkdownView);
-        if (!activeView || !activeView.file) return;
-
-        const file = activeView.file;
+    updateViewContent(file: TAbstractFile | null) {
+        if (!file) {
+            return;
+        }
         this.app.workspace.getLeavesOfType(VIEW_TYPE_CYPHER_LINKS).forEach((leaf) => {
-            this.app.fileManager.processFrontMatter(file, (frontmatter) => {
-                try {
-                    const result = CypherLinks.fromFrontmatter(frontmatter).linksAsText;
-                    (leaf.view as CypherLinksView).updateWith(result);
-                } catch (error) {
-                    console.error('Error in processFrontMatter callback:', error);
-                }
+            const cypherLinksView = leaf.view as CypherLinksView;
+            this._nodes.filter((node) => node.file === file).forEach((node) => {
+                cypherLinksView?.updateFor(node, this._nodes);
             });
         });
     }
