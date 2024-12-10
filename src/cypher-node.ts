@@ -1,18 +1,26 @@
+import { FileManager, TFile } from "obsidian";
+
 export class CypherNode {
     private _name: string;
     private _labels: string[];
+    private _file: TFile;
 
-    constructor(private _properties: Record<string, any>) {
+    constructor(private _properties: Record<string, any>, file: TFile) {
         this._name = _properties.name;
         this._labels = _properties.labels;
+        this._file = file;
     }
 
-    public get name() : string {
+    public get name(): string {
         return this._name;
     }
-    
-    public get labels() : string[] {
+
+    public get labels(): string[] {
         return this._labels;
+    }
+
+    public get file(): TFile {
+        return this._file;
     }
 
     public property(key: string): any {
@@ -20,6 +28,14 @@ export class CypherNode {
     }
 
     static fromFrontmatter(frontmatter: Record<string, any>): CypherNode {
-        return new CypherNode(frontmatter);
+        return new CypherNode(frontmatter, new TFile());
+    }
+
+    static fromFile(file: TFile, fileManager: FileManager): Promise<CypherNode> {
+        return new Promise<CypherNode>((resolve) => {
+            fileManager.processFrontMatter(file, (frontmatter) => {
+                resolve(new CypherNode(frontmatter, file));
+            });
+        });
     }
 }

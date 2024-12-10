@@ -1,10 +1,17 @@
-import { Plugin, MarkdownView } from 'obsidian';
+import { Plugin, MarkdownView, TFile } from 'obsidian';
 import { CypherLinksView } from './view';
 import { VIEW_TYPE_CYPHER_LINKS } from './constants';
 import { CypherLinks } from './cypher-links-collection';
+import { CypherNode } from './cypher-node';
 
 export default class CypherLinksPlugin extends Plugin {
+    private _nodes: CypherNode[] = [];
+
     async onload() {
+        this.fillNodes().then(() => {
+            console.log(this._nodes);
+        });
+
         this.registerView(
             VIEW_TYPE_CYPHER_LINKS,
             (leaf) => new CypherLinksView(leaf, this)
@@ -17,6 +24,14 @@ export default class CypherLinksPlugin extends Plugin {
                 this.updateViewContent();
             }
         });
+    }
+
+    async fillNodes() {
+        this.app.vault.getMarkdownFiles().forEach((file) => {
+            CypherNode.fromFile(file, this.app.fileManager).then((node) => {
+                this._nodes.push(node);
+            });
+        });       
     }
 
     updateViewContent() {

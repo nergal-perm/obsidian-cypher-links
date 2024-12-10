@@ -21,7 +21,7 @@ describe('CypherString', () => {
         it.each([
             // [input, expectedProperties]
             ['-[:LINK {prop: 1}]->(:tag)', { prop: 1 }],
-            ['-[ :LINK { prop: 1, hello: "world"} ]->(:tag)', { prop: 1, hello: "world" }],
+            ['-[ :LINK{ prop: 1, hello: "world" }]->(:tag)', { prop: 1, hello: "world" }],
         ])('should extract link properties', (input, expectedProperties) => {
             target = CypherString.fromCypherString(input);
             expect(target.linkProperties).toEqual(expectedProperties);
