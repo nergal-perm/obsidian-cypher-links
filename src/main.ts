@@ -16,13 +16,16 @@ export default class CypherLinksPlugin extends Plugin {
         this.activateView();
 
         // Listen for active leaf change
-        this.app.workspace.on('active-leaf-change', (leaf) => {
-            if (leaf?.view instanceof MarkdownView) {
-                this.updateViewContent(leaf.view.file);
-            }
-        });
+        this.registerEvent(
+            this.app.workspace.on('active-leaf-change', (leaf) => {
+                if (leaf?.view instanceof MarkdownView) {
+                    this.updateViewContent(leaf.view.file);
+                }
+            })
+        );
         this.registerEvent(
             this.app.vault.on('modify', (file) => {
+                // TODO: fails to parse frontmatter while editing it and reverts changes
                 this.fillNodes();
                 this.updateViewContent(file);
             })

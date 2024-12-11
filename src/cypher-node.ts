@@ -38,8 +38,16 @@ export class CypherNode {
             const li = ul.createEl('li')
             const link = CypherLink.fromCypherStringWithNodes(cypherString, nodes);
             li.createEl('strong', { text: link._direction });
-            li.appendText(': ' + link._type + ' ');
-            const linkElement = li.createEl('a', { text: link.node?.name });
+            let linkElement: HTMLElement;
+            if (link._direction == 'in') {
+                li.appendText(': ');
+                linkElement = li.createEl('a', { text: link.node?.name });
+                li.appendText(' ' + link._type + ' ');
+            } else {
+                li.appendText(': ' + link._type + ' ');
+                linkElement = li.createEl('a', { text: link.node?.name });
+
+            }
             const linkPath = link.node?.file.path;
             if (linkPath != null) {
                 linkElement.addEventListener("click", (event) => {
