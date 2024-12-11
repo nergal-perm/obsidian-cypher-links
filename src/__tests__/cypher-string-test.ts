@@ -26,5 +26,25 @@ describe('CypherString', () => {
             target = CypherString.fromCypherString(input);
             expect(target.linkProperties).toEqual(expectedProperties);
         });
+    
+        it.each([
+            // [input, expectedLabels]
+            ['-[:LINK]->(:tag)', ['tag']],
+            ['-[:LINK]->(:tag:tag2)', ['tag', 'tag2']],
+            ['-[:LINK]->(:tag:tag2:tag3)', ['tag', 'tag2', 'tag3']],
+            ['<-[:LINK]-(:tag {prop:1})', ['tag']],
+        ])('should extract node labels', (input, expectedLabels) => {
+            target = CypherString.fromCypherString(input);
+            expect(target.nodeLabels).toEqual(expectedLabels);
+        });
+    
+        it.each([
+            // [input, expectedProperties]
+            ['<-[:LINK {prop:1}]-( :tag {prop: 2} )', { prop: 2 }],
+            ['<-[:LINK {prop:1}]-(:tag {prop:2, hello:"world" } )', { prop: 2, hello: "world" }],
+        ])('should extract node properties', (input, expectedProperties) => {
+            target = CypherString.fromCypherString(input);
+            expect(target.nodeProperties).toEqual(expectedProperties);
+        });
     });
 });

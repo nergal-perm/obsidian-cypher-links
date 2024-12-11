@@ -62,7 +62,7 @@ describe('CypherLinks Plugin', () => {
             });
             mockWorkspace.getLeavesOfType.mockReturnValue([mockLeaf]);
 
-            plugin.updateViewContent();
+            plugin.updateViewContent(mockFile);
 
             expect(mockApp.fileManager.processFrontMatter).toHaveBeenCalledWith(
                 mockFile,

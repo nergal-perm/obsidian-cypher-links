@@ -1,7 +1,6 @@
 import { Plugin, MarkdownView, TAbstractFile } from 'obsidian';
 import { CypherLinksView } from './view';
 import { VIEW_TYPE_CYPHER_LINKS } from './constants';
-import { CypherLinks } from './cypher-links-collection';
 import { CypherNode } from './cypher-node';
 
 export default class CypherLinksPlugin extends Plugin {

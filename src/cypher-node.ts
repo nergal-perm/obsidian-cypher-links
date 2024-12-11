@@ -1,4 +1,4 @@
-import { CypherLink } from "cypher-link";
+import { CypherLink } from "./cypher-link";
 import { FileManager, TFile } from "obsidian";
 
 export class CypherNode {
@@ -29,10 +29,14 @@ export class CypherNode {
     }
 
     addLinksAsHtmlListItems(ul: HTMLUListElement, nodes: CypherNode[]) {
-        const links = this.property('links');
-        for (const link of links) {
+        const cypherStrings = this.property('links');
+        if (!cypherStrings || !Array.isArray(cypherStrings)) {
+            return;
+        }
+        for (const cypherString of cypherStrings) {
+            console.log(CypherLink.fromCypherStringWithNodes(cypherString, nodes));
             const li = ul.createEl('li')
-            const linkElement = li.createEl('a', { text: link })
+            const linkElement = li.createEl('a', { text: cypherString })
         }
     }
 

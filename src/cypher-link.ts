@@ -1,8 +1,11 @@
+import { CypherString } from "./cypher-string";
+import { CypherNode } from "./cypher-node";
+
 export class CypherLink {
     _type: string;
     _direction: any;
 
-    private constructor(private _cypher: string) {
+    private constructor(private _cypher: string, private _node: CypherNode | null = null) {
         this._type = CypherLink.extractType(_cypher);
         this._direction = CypherLink.extractDirection(_cypher);
     }
@@ -13,6 +16,26 @@ export class CypherLink {
 
     static fromCypherString(cypher: string): CypherLink {
         return new CypherLink(cypher);
+    }
+
+    static fromCypherStringWithNodes(cypher: string, nodes: CypherNode[]): CypherLink {
+        const cypherString = CypherString.fromCypherString(cypher);
+        let node = nodes.filter((node) => 
+            hasAllLabels(node) && hasAllProperties(node)
+        ).first();
+        return new CypherLink(cypher, node);
+
+        function hasAllLabels(node: CypherNode): boolean {
+            return cypherString.nodeLabels.every(
+                (label) => node.labels.includes(label)
+            );
+        }
+    
+        function hasAllProperties(node: CypherNode): boolean {
+            return Object.entries(cypherString.nodeProperties).every(
+                ([key, value]) => node.property(key) === value
+            );
+        }
     }
 
     static extractType(cypher: string): string {
