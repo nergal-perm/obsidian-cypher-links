@@ -33,7 +33,7 @@ export class CypherLinksView extends ItemView {
         container.createEl('h4', { text: 'Cypher links' })
 
         const ul = container.createEl('ul')
-        node.addLinksAsHtmlListItems(ul, nodes, this.plugin.app);
+        node.addLinksAsHtmlListItems(ul, nodes, this.plugin);
     }
 
     async onClose() {

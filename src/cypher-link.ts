@@ -30,7 +30,7 @@ export class CypherLink {
         return new CypherLink(cypher, node);
 
         function hasAllLabels(node: CypherNode): boolean {
-            return cypherString.nodeLabels.every(
+            return cypherString.nodeLabels.length > 0 && cypherString.nodeLabels.every(
                 (label) => node.labels.includes(label)
             );
         }

@@ -2,12 +2,25 @@ import { Plugin, MarkdownView, TAbstractFile } from 'obsidian';
 import { CypherLinksView } from './view';
 import { VIEW_TYPE_CYPHER_LINKS } from './constants';
 import { CypherNode } from './cypher-node';
+import { CypherSettings } from './settings';
 
 export default class CypherLinksPlugin extends Plugin {
     private _nodes: CypherNode[] = [];
+    _settings: any = {};
+
+    get nodes(): CypherNode[] {
+        return this._nodes;
+    } 
+
+    public settings(key: string): any {
+        return this._settings[key];
+    }
 
     async onload() {
         this.fillNodes();
+
+        await this.loadSettings();
+        this.addSettingTab(new CypherSettings(this.app, this));
 
         this.registerView(
             VIEW_TYPE_CYPHER_LINKS,
@@ -36,6 +49,14 @@ export default class CypherLinksPlugin extends Plugin {
                 this.updateViewContent(file);
             })
         );
+    }
+
+    async loadSettings() {
+        this._settings = Object.assign({}, await this.loadData())
+    }
+
+    async saveSettings() {
+        await this.saveData(this._settings)
     }
 
     fillNodes() {

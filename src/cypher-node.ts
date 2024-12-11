@@ -1,6 +1,7 @@
 import { CypherString } from "cypher-string";
 import { CypherLink } from "./cypher-link";
 import { App, FileManager, TFile } from "obsidian";
+import CypherLinksPlugin from "main";
 
 export class CypherNode {
     private _name: string;
@@ -25,11 +26,21 @@ export class CypherNode {
         return this._file;
     }
 
+    public get links(): CypherLink[] {
+        const cypherStrings = this.property('links');
+        if (!cypherStrings || !Array.isArray(cypherStrings)) {
+            return [];
+        }
+        return cypherStrings.map( (cypherString: string) => 
+            CypherLink.fromCypherString(cypherString)
+    );
+    }
+
     public property(key: string): any {
         return this._properties[key];
     }
 
-    addLinksAsHtmlListItems(ul: HTMLUListElement, nodes: CypherNode[], app: App) {
+    addLinksAsHtmlListItems(ul: HTMLUListElement, nodes: CypherNode[], plugin: CypherLinksPlugin) {
         const cypherStrings = this.property('links');
         if (!cypherStrings || !Array.isArray(cypherStrings)) {
             return;
@@ -42,9 +53,9 @@ export class CypherNode {
             if (link._direction == 'in') {
                 li.appendText(': ');
                 linkElement = li.createEl('a', { text: link.node?.name });
-                li.appendText(' ' + link._type + ' ');
+                li.appendText(' ' + plugin._settings[link._type] + ' ');
             } else {
-                li.appendText(': ' + link._type + ' ');
+                li.appendText(': ' + plugin._settings[link._type] + ' ');
                 linkElement = li.createEl('a', { text: link.node?.name });
 
             }
@@ -52,7 +63,7 @@ export class CypherNode {
             if (linkPath != null) {
                 linkElement.addEventListener("click", (event) => {
                     event.preventDefault() // Prevent default link behavior
-                    app.workspace.openLinkText(linkPath, "", false) // Open the note
+                    plugin.app.workspace.openLinkText(linkPath, "", false) // Open the note
                 })
             }
         }
