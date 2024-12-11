@@ -14,6 +14,10 @@ export class CypherLink {
         return this._cypher;
     } 
 
+    get node(): CypherNode | null {
+        return this._node;
+    }
+
     static fromCypherString(cypher: string): CypherLink {
         return new CypherLink(cypher);
     }

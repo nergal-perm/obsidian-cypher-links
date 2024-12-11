@@ -1,5 +1,6 @@
+import { CypherString } from "cypher-string";
 import { CypherLink } from "./cypher-link";
-import { FileManager, TFile } from "obsidian";
+import { App, FileManager, TFile } from "obsidian";
 
 export class CypherNode {
     private _name: string;
@@ -28,15 +29,24 @@ export class CypherNode {
         return this._properties[key];
     }
 
-    addLinksAsHtmlListItems(ul: HTMLUListElement, nodes: CypherNode[]) {
+    addLinksAsHtmlListItems(ul: HTMLUListElement, nodes: CypherNode[], app: App) {
         const cypherStrings = this.property('links');
         if (!cypherStrings || !Array.isArray(cypherStrings)) {
             return;
         }
         for (const cypherString of cypherStrings) {
-            console.log(CypherLink.fromCypherStringWithNodes(cypherString, nodes));
             const li = ul.createEl('li')
-            const linkElement = li.createEl('a', { text: cypherString })
+            const link = CypherLink.fromCypherStringWithNodes(cypherString, nodes);
+            li.createEl('strong', { text: link._direction });
+            li.appendText(': ' + link._type + ' ');
+            const linkElement = li.createEl('a', { text: link.node?.name });
+            const linkPath = link.node?.file.path;
+            if (linkPath != null) {
+                linkElement.addEventListener("click", (event) => {
+                    event.preventDefault() // Prevent default link behavior
+                    app.workspace.openLinkText(linkPath, "", false) // Open the note
+                })
+            }
         }
     }
 
