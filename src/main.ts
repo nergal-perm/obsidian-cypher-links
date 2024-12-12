@@ -38,7 +38,7 @@ export default class CypherLinksPlugin extends Plugin {
         );
         this.registerEvent(
             this.app.vault.on('modify', (file) => {
-                // TODO: fails to parse frontmatter while editing it and reverts changes
+                // @todo #2 fix frontmatter parsing while editing it (do not revert changes upon error)
                 this.fillNodes();
                 this.updateViewContent(file);
             })
