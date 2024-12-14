@@ -37,14 +37,14 @@ export default class CypherLinksPlugin extends Plugin {
             })
         );
         this.registerEvent(
-            this.app.vault.on('modify', (file) => {
-                this.fillNodes();
+            this.app.vault.on('modify', async (file) => {
+                await this.fillNodes();
                 this.updateViewContent(file);
             })
         );
         this.registerEvent(
-            this.app.vault.on('rename', (file) => {
-                this.fillNodes();
+            this.app.vault.on('rename', async (file) => {
+                await this.fillNodes();
                 this.updateViewContent(file);
             })
         );
@@ -58,13 +58,20 @@ export default class CypherLinksPlugin extends Plugin {
         await this.saveData(this._settings)
     }
 
-    fillNodes() {
+    async fillNodes() {
         this._nodes = [];
-        this.app.vault.getMarkdownFiles().forEach((file) => {
-            CypherNode.fromFile(file, this.app.fileManager)
-            .then((node) => { this._nodes.push(node); })
-            .catch((error) => { /* do nothing, swallow the error */});
-        });       
+        const promises = this.app.vault.getMarkdownFiles().map((file) => {
+            return CypherNode.fromFile(file, this.app.fileManager)
+                .then((node) => {
+                    if (node) {
+                        this._nodes.push(node);
+                    }
+                })
+                .catch((error) => { /* do nothing, swallow the error */ });
+        });
+
+        // Wait for all promises to resolve
+        await Promise.all(promises);
     }
 
     updateViewContent(file: TAbstractFile | null) {
@@ -73,9 +80,10 @@ export default class CypherLinksPlugin extends Plugin {
         }
         this.app.workspace.getLeavesOfType(VIEW_TYPE_CYPHER_LINKS).forEach((leaf) => {
             const cypherLinksView = leaf.view as CypherLinksView;
-            // @todo #2 Change the node filter to use some kind of unique identifier
-            this._nodes.filter((node) => node.file === file).forEach((node) => {
-                cypherLinksView?.updateFor(node, this._nodes);
+            this._nodes.forEach((node) => {
+                if (node.file.path === file.path) {
+                    cypherLinksView?.updateFor(node, this._nodes);
+                }
             });
         });
     }
