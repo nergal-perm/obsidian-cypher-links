@@ -73,6 +73,7 @@ export default class CypherLinksPlugin extends Plugin {
         }
         this.app.workspace.getLeavesOfType(VIEW_TYPE_CYPHER_LINKS).forEach((leaf) => {
             const cypherLinksView = leaf.view as CypherLinksView;
+            // @todo #2 Change the node filter to use some kind of unique identifier
             this._nodes.filter((node) => node.file === file).forEach((node) => {
                 cypherLinksView?.updateFor(node, this._nodes);
             });
