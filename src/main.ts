@@ -38,7 +38,6 @@ export default class CypherLinksPlugin extends Plugin {
         );
         this.registerEvent(
             this.app.vault.on('modify', (file) => {
-                // @todo #2 fix frontmatter parsing while editing it (do not revert changes upon error)
                 this.fillNodes();
                 this.updateViewContent(file);
             })
@@ -62,9 +61,9 @@ export default class CypherLinksPlugin extends Plugin {
     fillNodes() {
         this._nodes = [];
         this.app.vault.getMarkdownFiles().forEach((file) => {
-            CypherNode.fromFile(file, this.app.fileManager).then((node) => {
-                this._nodes.push(node);
-            });
+            CypherNode.fromFile(file, this.app.fileManager)
+            .then((node) => { this._nodes.push(node); })
+            .catch((error) => { /* do nothing, swallow the error */});
         });       
     }
 

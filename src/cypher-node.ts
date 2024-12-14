@@ -74,9 +74,12 @@ export class CypherNode {
     }
 
     static fromFile(file: TFile, fileManager: FileManager): Promise<CypherNode> {
-        return new Promise<CypherNode>((resolve) => {
+        return new Promise<CypherNode>((resolve, reject) => {
             fileManager.processFrontMatter(file, (frontmatter) => {
-                resolve(new CypherNode(frontmatter, file));
+                const node = new CypherNode(frontmatter, file); // Assign node here
+                resolve(node); // Resolve with the node
+            }).catch((error) => {
+                reject(error);
             });
         });
     }
