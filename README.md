@@ -10,4 +10,13 @@ Markdown files as the data storage and model description.
 The idea is to represent all the real world Things and their relationships as Obsidian
 notes (and then the Neo4J nodes). 
 
-@todo #1 Create the roadmap (as a list of _epics_) for the project
+# Roadmap
+
+- [ ] Represent relationships as notes (and nodes), as described in [Cesare de, Foy, Partridge, 2013]
+- [ ] UI elements to create new relationships from the selected note
+- [ ] Generate CYPHER script to transfer model to Neo4J
+- [ ] Direct interaction with Neo4J instance
+
+# Links and references
+ 
+- Cesare, S. de. Re-engineering Data with 4D Ontologies and Graph Databases / S. de Cesare, G. Foy, C. Partridge // Lecture Notes in Business Information Processing. – 2013. – P. 304-316.
