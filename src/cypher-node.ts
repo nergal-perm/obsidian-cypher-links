@@ -1,6 +1,5 @@
-import { CypherString } from "cypher-string";
 import { CypherLink } from "./cypher-link";
-import { App, FileManager, TFile } from "obsidian";
+import { FileManager, TFile } from "obsidian";
 import CypherLinksPlugin from "main";
 
 export class CypherNode {

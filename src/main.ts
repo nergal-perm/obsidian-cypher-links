@@ -60,6 +60,7 @@ export default class CypherLinksPlugin extends Plugin {
 
     async fillNodes() {
         this._nodes = [];
+        // @todo #9 Create a proper mock for getMarkdownFiles
         const promises = this.app.vault.getMarkdownFiles().map((file) => {
             return CypherNode.fromFile(file, this.app.fileManager)
                 .then((node) => {

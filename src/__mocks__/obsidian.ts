@@ -48,3 +48,8 @@ export class ItemView {
     constructor() {
     }
 }
+
+export class PluginSettingTab {
+    constructor() {
+    }
+}
