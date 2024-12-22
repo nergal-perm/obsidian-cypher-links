@@ -10,7 +10,7 @@ export default class CypherLinksPlugin extends Plugin {
 
     get nodes(): CypherNode[] {
         return this._nodes;
-    } 
+    }
 
     public settings(key: string): any {
         return this._settings[key];
@@ -62,13 +62,18 @@ export default class CypherLinksPlugin extends Plugin {
         this._nodes = [];
         // @todo #9 Create a proper mock for getMarkdownFiles
         const promises = this.app.vault.getMarkdownFiles().map((file) => {
-            return CypherNode.fromFile(file, this.app.fileManager)
-                .then((node) => {
-                    if (node) {
-                        this._nodes.push(node);
-                    }
-                })
-                .catch((error) => { /* do nothing, swallow the error */ });
+            this.app.vault.cachedRead(file).then((content) => {
+                if (content.startsWith('---')) {
+
+                    return CypherNode.fromFile(file, this.app.fileManager)
+                        .then((node) => {
+                            if (node) {
+                                this._nodes.push(node);
+                            }
+                        })
+                        .catch((error) => { /* do nothing, swallow the error */ });
+                }
+            });
         });
 
         // Wait for all promises to resolve
