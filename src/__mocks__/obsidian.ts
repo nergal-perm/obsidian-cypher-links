@@ -3,11 +3,7 @@ export class Plugin {
     manifest: any;
 
     constructor() {
-        this.app = {
-            vault: {
-                getMarkdownFiles: jest.fn().mockReturnValue([]),
-            }
-        };
+        this.app = {};
         this.manifest = {};
     }
 
@@ -15,7 +11,19 @@ export class Plugin {
         return Promise.resolve();
     }
 
+    registerEvent(event: any) {
+        return Promise.resolve();
+    }
+
     async onload() {
+        return Promise.resolve();
+    }
+
+    async loadData() {
+        return Promise.resolve();
+    }
+
+    async addSettingTab(settingTab: any) {
         return Promise.resolve();
     }
 

@@ -28,6 +28,7 @@ describe('CypherLinks Plugin', () => {
             },
             vault: {
                 getMarkdownFiles: jest.fn().mockReturnValue([]),
+                on: jest.fn(),
             }
         };
 
