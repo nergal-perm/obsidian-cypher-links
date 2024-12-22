@@ -39,6 +39,7 @@ export class CypherNode {
         return this._properties[key];
     }
 
+    // @todo #10 Move the html link list creation to the CypherLinksView class
     addLinksAsHtmlListItems(ul: HTMLUListElement, nodes: CypherNode[], plugin: CypherLinksPlugin) {
         const cypherStrings = this.property('links');
         if (!cypherStrings || !Array.isArray(cypherStrings)) {

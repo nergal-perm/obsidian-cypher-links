@@ -1,6 +1,8 @@
-import { Plugin, MarkdownView, TFile, PluginManifest, ItemView } from 'obsidian';
+import { Plugin, MarkdownView, TFile, PluginManifest, ItemView, WorkspaceLeaf } from 'obsidian';
 import CypherLinksPlugin from '../main';
 import { VIEW_TYPE_CYPHER_LINKS } from '../constants';
+import { CypherNode } from '../cypher-node';
+import { CypherLinksView } from '../view';
 
 // Mock Obsidian's API
 jest.mock('obsidian');
@@ -10,12 +12,28 @@ describe('CypherLinks Plugin', () => {
     let mockApp: any;
     let mockWorkspace: any;
     let mockManifest: any;
+    let mockLeaf: WorkspaceLeaf;
+    let mockView: CypherLinksView;
 
     beforeEach(() => {
         // Setup mocks
+        mockView = new CypherLinksView(mockLeaf, plugin);
+
+        mockLeaf = { view: mockView } as unknown as WorkspaceLeaf;
+
+        mockView.containerEl = {
+            children: [
+                {},
+                {
+                    empty: jest.fn(),
+                    createEl: jest.fn().mockReturnValue({}),
+                },
+            ],
+        } as any;
+
         mockWorkspace = {
             on: jest.fn(),
-            getLeavesOfType: jest.fn().mockReturnValue([]),
+            getLeavesOfType: jest.fn().mockReturnValue([mockLeaf]),
             getRightLeaf: jest.fn(),
             revealLeaf: jest.fn(),
             getActiveViewOfType: jest.fn(),
@@ -55,16 +73,16 @@ describe('CypherLinks Plugin', () => {
     describe('updateViewContent', () => {
         it('should process frontmatter when active view exists', () => {
             const mockFile = new TFile();
-            const mockLeaf = {
-                view: {
-                    updateWith: jest.fn(),
-                },
-            };
+            mockFile.path = 'test.md';
 
             mockWorkspace.getActiveViewOfType.mockReturnValue({
                 file: mockFile,
             });
-            mockWorkspace.getLeavesOfType.mockReturnValue([mockLeaf]);
+
+            plugin.nodes.push(new CypherNode(
+                { links: ['test'] },
+                mockFile
+            ));
 
             plugin.updateViewContent(mockFile);
 

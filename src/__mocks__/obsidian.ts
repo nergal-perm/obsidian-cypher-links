@@ -1,3 +1,5 @@
+import { CypherLinksView } from "view";
+
 export class Plugin {
     app: any;
     manifest: any;
@@ -59,9 +61,21 @@ export class PluginManifest {
 export class ItemView {
     constructor() {
     }
+
+    containerEl: {
+        children: any[];
+    };
 }
 
 export class PluginSettingTab {
     constructor() {
+    }
+}
+
+export class WorkspaceLeaf {
+    view: CypherLinksView;
+
+    constructor(view: CypherLinksView) {
+        this.view = view;
     }
 }
