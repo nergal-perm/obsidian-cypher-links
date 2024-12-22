@@ -1,6 +1,5 @@
-import { CypherLink } from "./cypher-link";
-import { FileManager, TFile } from "obsidian";
-import CypherLinksPlugin from "main";
+import {CypherLink} from "./cypher-link";
+import {FileManager, TFile} from "obsidian";
 
 export class CypherNode {
     private _name: string;
@@ -8,8 +7,8 @@ export class CypherNode {
     private _file: TFile;
 
     constructor(private _properties: Record<string, any>, file: TFile) {
-        this._name = _properties.name;
-        this._labels = _properties.labels;
+        this._name = _properties.name ?? '';
+        this._labels = _properties.labels ?? [];
         this._file = file;
     }
 
@@ -39,34 +38,14 @@ export class CypherNode {
         return this._properties[key];
     }
 
-    // @todo #10 Move the html link list creation to the CypherLinksView class
-    addLinksAsHtmlListItems(ul: HTMLUListElement, nodes: CypherNode[], plugin: CypherLinksPlugin) {
+    getAllLinksUsing(nodes: CypherNode[]): CypherLink[] {
         const cypherStrings = this.property('links');
         if (!cypherStrings || !Array.isArray(cypherStrings)) {
-            return;
+            return [];
         }
-        for (const cypherString of cypherStrings) {
-            const li = ul.createEl('li')
-            const link = CypherLink.fromCypherStringWithNodes(cypherString, nodes);
-            li.createEl('strong', { text: link._direction });
-            let linkElement: HTMLElement;
-            if (link._direction == 'in') {
-                li.appendText(': ');
-                linkElement = li.createEl('a', { text: link.node?.name });
-                li.appendText(' ' + plugin._settings[link._type] + ' ');
-            } else {
-                li.appendText(': ' + plugin._settings[link._type] + ' ');
-                linkElement = li.createEl('a', { text: link.node?.name });
-
-            }
-            const linkPath = link.node?.file.path;
-            if (linkPath != null) {
-                linkElement.addEventListener("click", (event) => {
-                    event.preventDefault() // Prevent default link behavior
-                    plugin.app.workspace.openLinkText(linkPath, "", false) // Open the note
-                })
-            }
-        }
+        return cypherStrings.map ( (cypherString: string) => {
+            return CypherLink.fromCypherStringWithNodes(cypherString, nodes);
+        });
     }
 
     static fromFrontmatter(frontmatter: Record<string, any>): CypherNode {
@@ -82,5 +61,14 @@ export class CypherNode {
                 reject(error);
             });
         });
+    }
+}
+
+export class NotExistingNode extends CypherNode {
+    constructor() {
+        super({
+            name: 'Not existing node',
+            labels: []
+        }, new TFile());
     }
 }

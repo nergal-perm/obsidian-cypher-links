@@ -1,8 +1,8 @@
-import { Plugin, MarkdownView, TFile, PluginManifest, ItemView, WorkspaceLeaf } from 'obsidian';
+import {TFile, WorkspaceLeaf} from 'obsidian';
 import CypherLinksPlugin from '../main';
-import { VIEW_TYPE_CYPHER_LINKS } from '../constants';
-import { CypherNode } from '../cypher-node';
-import { CypherLinksView } from '../view';
+import {VIEW_TYPE_CYPHER_LINKS} from '../constants';
+import {CypherNode} from '../cypher-node';
+import {CypherLinksView} from '../view';
 
 // Mock Obsidian's API
 jest.mock('obsidian');
@@ -24,6 +24,7 @@ describe('CypherLinks Plugin', () => {
         mockView.containerEl = {
             children: [
                 {},
+                // @todo #9 Create a proper mock for creating html elements
                 {
                     empty: jest.fn(),
                     createEl: jest.fn().mockReturnValue({}),
@@ -80,7 +81,7 @@ describe('CypherLinks Plugin', () => {
             });
 
             plugin.nodes.push(new CypherNode(
-                { links: ['test'] },
+                { links: ['-[:PART_OF]->(:Test)'], labels: ['Test'], name: 'Test' },
                 mockFile
             ));
 

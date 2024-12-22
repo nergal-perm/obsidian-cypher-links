@@ -1,5 +1,5 @@
-import { CypherString } from "./cypher-string";
-import { CypherNode } from "./cypher-node";
+import {CypherString} from "./cypher-string";
+import {CypherNode, NotExistingNode} from "./cypher-node";
 
 export class CypherLink {
     _type: string;
@@ -12,7 +12,7 @@ export class CypherLink {
 
     get asString(): string {
         return this._cypher;
-    } 
+    }
 
     get node(): CypherNode | null {
         return this._node;
@@ -24,9 +24,11 @@ export class CypherLink {
 
     static fromCypherStringWithNodes(cypher: string, nodes: CypherNode[]): CypherLink {
         const cypherString = CypherString.fromCypherString(cypher);
-        let node = nodes.filter((node) => 
+
+        let filteredNodes = nodes.filter((node: CypherNode) =>
             hasAllLabels(node) && hasAllProperties(node)
-        ).first();
+        );
+        let node = filteredNodes.length === 0 ? new NotExistingNode() : filteredNodes[0];
         return new CypherLink(cypher, node);
 
         function hasAllLabels(node: CypherNode): boolean {
@@ -34,7 +36,7 @@ export class CypherLink {
                 (label) => node.labels.includes(label)
             );
         }
-    
+
         function hasAllProperties(node: CypherNode): boolean {
             return Object.entries(cypherString.nodeProperties).every(
                 ([key, value]) => node.property(key) === value

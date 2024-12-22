@@ -1,7 +1,7 @@
-import { ItemView, WorkspaceLeaf } from 'obsidian';
-import { VIEW_TYPE_CYPHER_LINKS } from './constants';
+import {ItemView, WorkspaceLeaf} from 'obsidian';
+import {VIEW_TYPE_CYPHER_LINKS} from './constants';
 import CypherLinksPlugin from './main';
-import { CypherNode } from './cypher-node';
+import {CypherNode} from './cypher-node';
 
 export class CypherLinksView extends ItemView {
     plugin: CypherLinksPlugin;
@@ -33,7 +33,27 @@ export class CypherLinksView extends ItemView {
         container.createEl('h4', { text: 'Cypher links' })
 
         const ul = container.createEl('ul')
-        node.addLinksAsHtmlListItems(ul, nodes, this.plugin);
+        node.getAllLinksUsing(nodes).forEach(cypherLink => {
+            const li = ul.createEl('li')
+            li.createEl('strong', { text: cypherLink._direction });
+            let linkElement: HTMLElement;
+            if (cypherLink._direction == 'in') {
+                li.appendText(': ');
+                linkElement = li.createEl('a', { text: cypherLink.node?.name });
+                li.appendText(' ' + this.plugin._settings[cypherLink._type] + ' ');
+            } else {
+                li.appendText(': ' + this.plugin._settings[cypherLink._type] + ' ');
+                linkElement = li.createEl('a', { text: cypherLink.node?.name });
+
+            }
+            const linkPath = cypherLink.node?.file.path;
+            if (linkPath != null) {
+                linkElement.addEventListener("click", (event) => {
+                    event.preventDefault() // Prevent default link behavior
+                    this.plugin.app.workspace.openLinkText(linkPath, "", false) // Open the note
+                })
+            }
+        });
     }
 
     async onClose() {

@@ -1,8 +1,8 @@
-import { Plugin, MarkdownView, TAbstractFile } from 'obsidian';
-import { CypherLinksView } from './view';
-import { VIEW_TYPE_CYPHER_LINKS } from './constants';
-import { CypherNode } from './cypher-node';
-import { CypherSettings } from './settings';
+import {MarkdownView, Plugin, TAbstractFile, WorkspaceLeaf} from 'obsidian';
+import {CypherLinksView} from './view';
+import {VIEW_TYPE_CYPHER_LINKS} from './constants';
+import {CypherNode} from './cypher-node';
+import {CypherSettings} from './settings';
 
 export default class CypherLinksPlugin extends Plugin {
     private _nodes: CypherNode[] = [];
@@ -60,7 +60,6 @@ export default class CypherLinksPlugin extends Plugin {
 
     async fillNodes() {
         this._nodes = [];
-        // @todo #9 Create a proper mock for getMarkdownFiles
         const promises = this.app.vault.getMarkdownFiles().map((file) => {
             this.app.vault.cachedRead(file).then((content) => {
                 if (content.startsWith('---')) {
@@ -97,7 +96,7 @@ export default class CypherLinksPlugin extends Plugin {
     async activateView() {
         const { workspace } = this.app
 
-        let leaf = null
+        let leaf: WorkspaceLeaf | null;
         const leaves = workspace.getLeavesOfType(VIEW_TYPE_CYPHER_LINKS)
 
         if (leaves.length > 0) {
