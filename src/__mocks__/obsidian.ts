@@ -3,7 +3,11 @@ export class Plugin {
     manifest: any;
 
     constructor() {
-        this.app = {};
+        this.app = {
+            vault: {
+                getMarkdownFiles: jest.fn().mockReturnValue([]),
+            }
+        };
         this.manifest = {};
     }
 

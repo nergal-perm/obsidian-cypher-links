@@ -26,6 +26,9 @@ describe('CypherLinks Plugin', () => {
             fileManager: {
                 processFrontMatter: jest.fn(),
             },
+            vault: {
+                getMarkdownFiles: jest.fn().mockReturnValue([]),
+            }
         };
 
         plugin = new CypherLinksPlugin(mockApp, mockManifest);
