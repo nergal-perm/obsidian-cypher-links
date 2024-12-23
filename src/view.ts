@@ -19,44 +19,41 @@ export class CypherLinksView extends ItemView {
         return 'Cypher Links View';
     }
 
-    getIcon() {
+    override getIcon() {
         return 'link';
     }
 
-    async onOpen() {
+    override async onOpen() {
         // do nothing
     }
 
     updateFor(node: CypherNode, nodes: CypherNode[]) {
-        const container = this.containerEl.children[1]
+        const container = this.containerEl.children[1] as HTMLElement
         container.empty()
-        container.createEl('h4', { text: 'Cypher links' })
+        container.createEl('h4', {text: 'Cypher links'})
 
         const ul = container.createEl('ul')
         node.getAllLinksUsing(nodes).forEach(cypherLink => {
             const li = ul.createEl('li')
-            li.createEl('strong', { text: cypherLink._direction });
+            li.createEl('strong', {text: cypherLink._direction});
             let linkElement: HTMLElement;
-            if (cypherLink._direction == 'in') {
-                li.appendText(': ');
-                linkElement = li.createEl('a', { text: cypherLink.node?.name });
-                li.appendText(' ' + this.plugin._settings[cypherLink._type] + ' ');
-            } else {
-                li.appendText(': ' + this.plugin._settings[cypherLink._type] + ' ');
-                linkElement = li.createEl('a', { text: cypherLink.node?.name });
-
-            }
-            const linkPath = cypherLink.node?.file.path;
-            if (linkPath != null) {
-                linkElement.addEventListener("click", (event) => {
-                    event.preventDefault() // Prevent default link behavior
-                    this.plugin.app.workspace.openLinkText(linkPath, "", false) // Open the note
-                })
+            if (cypherLink.node != null) {
+                if (cypherLink._direction == 'in') {
+                    li.appendText(': ');
+                    linkElement = li.createEl('a', {text: cypherLink.node.name});
+                    li.appendText(' ' + this.plugin._settings[cypherLink._type] + ' ');
+                } else {
+                    li.appendText(': ' + this.plugin._settings[cypherLink._type] + ' ');
+                    linkElement = li.createEl('a', {text: cypherLink.node.name});
+                }
+                const linkPath = cypherLink.node.file.path;
+                if (linkPath != null) {
+                    linkElement.addEventListener("click", (event) => {
+                        event.preventDefault() // Prevent default link behavior
+                        this.plugin.app.workspace.openLinkText(linkPath, "", false) // Open the note
+                    })
+                }
             }
         });
-    }
-
-    async onClose() {
-        // Nothing to clean up
     }
 }

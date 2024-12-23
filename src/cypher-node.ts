@@ -7,8 +7,8 @@ export class CypherNode {
     private _file: TFile;
 
     constructor(private _properties: Record<string, any>, file: TFile) {
-        this._name = _properties.name ?? '';
-        this._labels = _properties.labels ?? [];
+        this._name = _properties['name'] ?? '';
+        this._labels = _properties['labels'] ?? [];
         this._file = file;
     }
 

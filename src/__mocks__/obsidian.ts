@@ -1,4 +1,4 @@
-import { CypherLinksView } from "view";
+import {CypherLinksView} from "view";
 
 export class Plugin {
     app: any;
@@ -59,12 +59,12 @@ export class PluginManifest {
 }
 
 export class ItemView {
+    private containerEl: any;
     constructor() {
+        this.containerEl = {
+            children: [],
+        }
     }
-
-    containerEl: {
-        children: any[];
-    };
 }
 
 export class PluginSettingTab {

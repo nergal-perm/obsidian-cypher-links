@@ -16,7 +16,7 @@ export default class CypherLinksPlugin extends Plugin {
         return this._settings[key];
     }
 
-    async onload() {
+    override async onload() {
         this.fillNodes();
 
         await this.loadSettings();
@@ -71,6 +71,8 @@ export default class CypherLinksPlugin extends Plugin {
                             }
                         })
                         .catch((error) => { /* do nothing, swallow the error */ });
+                } else {
+                    return Promise.resolve();
                 }
             });
         });
@@ -101,7 +103,7 @@ export default class CypherLinksPlugin extends Plugin {
 
         if (leaves.length > 0) {
             // A leaf with our view already exists, use that
-            leaf = leaves[0]
+            leaf = leaves[0] as WorkspaceLeaf
         } else {
             // Our view could not be found in the workspace, create a new leaf
             // in the right sidebar for it

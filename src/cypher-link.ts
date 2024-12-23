@@ -47,7 +47,7 @@ export class CypherLink {
     static extractType(cypher: string): string {
         const typeMatch = cypher.match(/\[\s*:\s*([A-Za-z_][A-Za-z0-9_]*)\s*\]/);
         if (typeMatch) {
-            return typeMatch[1];
+            return typeMatch[1] as string;
         } else {
             throw new Error("Invalid cypher format");
         }
