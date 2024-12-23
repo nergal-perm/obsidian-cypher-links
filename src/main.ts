@@ -1,12 +1,19 @@
-import {MarkdownView, Plugin, TAbstractFile, WorkspaceLeaf} from 'obsidian';
+import {App, MarkdownView, Plugin, PluginManifest, TAbstractFile, WorkspaceLeaf} from 'obsidian';
 import {CypherLinksView} from './view';
 import {VIEW_TYPE_CYPHER_LINKS} from './constants';
 import {CypherNode} from './cypher-node';
 import {CypherSettings} from './settings';
+import {PluginCore} from "./plugin/plugin-core";
 
 export default class CypherLinksPlugin extends Plugin {
     private _nodes: CypherNode[] = [];
+    private _pluginCore: PluginCore;
     _settings: any = {};
+
+    constructor(app: App, manifest: PluginManifest) {
+        super(app, manifest);
+        this._pluginCore = PluginCore.create(app.workspace);
+    }
 
     get nodes(): CypherNode[] {
         return this._nodes;
@@ -30,7 +37,7 @@ export default class CypherLinksPlugin extends Plugin {
 
         // Listen for active leaf change
         this.registerEvent(
-            this.app.workspace.on('active-leaf-change', (leaf) => {
+            this._pluginCore.onLeafChange((leaf) => {
                 if (leaf?.view instanceof MarkdownView) {
                     this.updateViewContent(leaf.view.file);
                 }
